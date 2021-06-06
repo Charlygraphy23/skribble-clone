@@ -1,0 +1,16 @@
+@import "./dist/_veriables";
+@import "../pages/homePage/_homePage";
+@import "../pages/gamePage/_gamePage";
+@import "../components/gamePage/canvas/_canvas";
+@import "../components/gamePage/Chat/_messageComponent";
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background: url("/src/assets/background.jpg") no-repeat fixed center;
+	background-size: cover;
+}
