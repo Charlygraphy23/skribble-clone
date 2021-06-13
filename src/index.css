@@ -1,6 +1,7 @@
 body {
 	margin: 0;
 	font-family: "Rubik", sans-serif;
+	min-width: 1225px;
 }
 
 code {

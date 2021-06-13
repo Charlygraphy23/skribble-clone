@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const Canvas = () => {
+const Canvas = ({ socket }) => {
 	const canvasRef = useRef(null);
 	const canvasOverFlowRef = useRef(null);
 	const contextRef = useRef(null);
@@ -23,7 +23,7 @@ const Canvas = () => {
 
 		canvas.width = box.offsetWidth;
 		canvas.height = box.offsetHeight;
-		canvas.style.width = `${box.offsetWidth}px`;
+		canvas.style.width = `100%`;
 		canvas.style.height = `${box.offsetHeight}px`;
 
 		let canvasRect = canvas.getBoundingClientRect();
@@ -46,16 +46,42 @@ const Canvas = () => {
 		});
 	}, []);
 
+	useEffect(() => {
+		if (!socket) return;
+
+		socket.on("drawing-listner", ({ x, y }) => {
+			console.log("YYYYY");
+			contextRef.current.lineTo(x, y);
+			contextRef.current.stroke();
+		});
+		socket.on("start-drawing-listner", ({ x, y }) => {
+			contextRef.current.beginPath();
+			contextRef.current.moveTo(x, y);
+		});
+
+		socket.on("stop-drawing-listner", () => {
+			setIsDrawing(false);
+			contextRef.current.closePath();
+		});
+
+		return () => {
+			if (socket) socket.disconnect();
+		};
+	}, [socket]);
+
 	const startDrawing = (e) => {
 		setIsDrawing(true);
 		contextRef.current.beginPath();
 
-		if (type === "PEN")
-			contextRef.current.moveTo(
-				e.clientX - state.offsetX,
-				e.clientY - state.offsetY
-			);
-		else if (type === "RECT") {
+		if (type === "PEN") {
+			let x = e.clientX - state.offsetX;
+			let y = e.clientY - state.offsetY;
+			contextRef.current.moveTo(x, y);
+			if (socket) {
+				let __tempObj = { room: "demo", x, y };
+				socket.emit("start-drawing-trigger", __tempObj);
+			}
+		} else if (type === "RECT") {
 			// else draw on overflow canvas
 			setState((prevState) => ({
 				...prevState,
@@ -80,17 +106,25 @@ const Canvas = () => {
 			contextRef.current.strokeRect(state.startX, state.startY, width, height);
 		}
 
+		if (socket) {
+			socket.emit("stop-drawing-trigger", "demo");
+		}
 		contextRef.current.closePath();
 	};
 	const drawing = (e) => {
 		if (!isDrawing) return;
 
 		if (type === "PEN") {
-			contextRef.current.lineTo(
-				e.clientX - state.offsetX,
-				e.clientY - state.offsetY
-			);
+			let x = e.clientX - state.offsetX;
+			let y = e.clientY - state.offsetY;
+			contextRef.current.lineTo(x, y);
 			contextRef.current.stroke();
+
+			if (socket) {
+				let __tempObj = { room: "demo", x, y };
+
+				socket.emit("drawing-trigger", __tempObj);
+			}
 		} else if (type === "RECT") {
 			// drawing on overflow context
 			contextOverFlowRef.current.clearRect(

@@ -1,0 +1,18 @@
+.players {
+	background-color: white;
+	height: $height;
+	padding: 4px;
+	overflow: auto;
+
+	.player__cards {
+		display: flex;
+		flex-direction: column;
+		background-color: rgb(212, 212, 212);
+		border-radius: 4px;
+		padding: 5px;
+		margin-bottom: 4px;
+		h4 {
+			font-size: 1.1rem;
+		}
+	}
+}

@@ -1,41 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
-import io from "socket.io-client";
-import { SOCKET_URL } from "../../../config/app.config";
 
-const MessageComponent = () => {
-	const [socket, setSocket] = useState(null);
+// import { addUser } from "../../../store/actions/AddUsersAtions";
+import { useDispatch } from "react-redux";
+
+const MessageComponent = ({ socket, username }) => {
 	const [messages, setMessages] = useState([]);
-	const [username, setUsername] = useState("");
+
 	const [text, setText] = useState("");
-
-	useEffect(() => {
-		let name = prompt("Enter ur name");
-		setUsername(name);
-	}, []);
-
-	useEffect(() => {
-		if (!username) return;
-		let tempSocket = io(SOCKET_URL, {
-			reconnectionDelayMax: 10000,
-			query: {
-				room: "demo",
-				username: username,
-			},
-		});
-
-		tempSocket.connect();
-
-		setSocket(tempSocket);
-
-		return () => {
-			tempSocket.disconnect("demo");
-		};
-	}, [username]);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		if (!socket) return;
-		socket.on("new-user-joined", (messageData) => {
-			console.log("Hello", messageData);
+		socket.on("new-user-joined-chat", (messageData) => {
 			setMessages((prevState) => [...prevState, messageData]);
 		});
 
@@ -46,7 +22,7 @@ const MessageComponent = () => {
 		return () => {
 			socket.disconnect();
 		};
-	}, [socket]);
+	}, [socket, dispatch]);
 
 	const handleMessageSend = useCallback(
 		(e) => {
