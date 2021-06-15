@@ -26,6 +26,7 @@ export const kiskUserOutFromRoom = ({ io, socket }) => {
 	rooms[room].users = data?.users.filter((value) => value?.id !== socket?.id);
 
 	users = users.filter((value) => value?.id !== socket?.id);
+	io.to(room).emit("delete-user-broadcast", socket?.id);
 };
 
 export const messageSend = ({ userName, room, message, io, socket }) => {

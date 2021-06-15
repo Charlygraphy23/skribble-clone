@@ -6,6 +6,7 @@ import {
 	ADD_DRAW_ACTION,
 	ADD_COLOR,
 	ADD_LINE_WIDTH,
+	REMOVE_USER,
 } from "../actions/AddUsersAtions.js";
 
 let initialState = {
@@ -17,8 +18,15 @@ let initialState = {
 };
 
 export default (state = initialState, action) => {
-	const { userData, socketId, userLists, drawAction, color, lineWidth } =
-		action;
+	const {
+		userData,
+		socketId,
+		userLists,
+		drawAction,
+		color,
+		lineWidth,
+		userID,
+	} = action;
 
 	switch (action.type) {
 		case ADD_USER:
@@ -50,6 +58,11 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				lineWidth,
+			};
+		case REMOVE_USER:
+			return {
+				...state,
+				users: state.users.filter((value) => value?.id !== userID),
 			};
 		default:
 			return state;

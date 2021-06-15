@@ -1,8 +1,29 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { removeUser } from "../../../store/actions/AddUsersAtions";
 
-const Players = () => {
+const Players = ({ socket }) => {
 	const { users, socketId } = useSelector((state) => state.UserReducer);
+	const dispatch = useDispatch();
+
+	// useEffect(() => {
+	// 	if (!socket) return;
+
+	// 	socket.on("delete-user-broadcast", (userId) => {
+	// 		debugger;
+	// 		dispatch(removeUser(userId));
+	// 	});
+
+	// 	return () => {
+	// 		if (socket) socket.disconnect();
+	// 	};
+	// }, [socket, dispatch]);
+
+	// useEffect(() => {
+	// 	if (!users) return;
+
+	// 	console.log(users);
+	// }, [users]);
 
 	return (
 		<div className='players'>

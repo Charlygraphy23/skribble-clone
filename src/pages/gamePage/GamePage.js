@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import io from "socket.io-client";
 import Canvas from "../../components/gamePage/canvas/Canvas";
 import MessageComponent from "../../components/gamePage/Chat/MessageComponent";
@@ -13,7 +13,7 @@ import {
 	changeLineWidth,
 } from "../../store/actions/AddUsersAtions";
 import { useDispatch, useSelector } from "react-redux";
-
+const ROOM = "demo";
 const GamePage = () => {
 	const [socket, setSocket] = useState(null);
 	const [username, setUsername] = useState("");
@@ -78,6 +78,21 @@ const GamePage = () => {
 		};
 	}, [socket, dispatch]);
 
+	const handleColorChnage = useCallback(
+		(e) => {
+			// if (socket) {
+			// 	socket.emit("change-color", e.target.value, ROOM);
+			// 	socket.on("set-color", (color) => {
+			// 		console.log("SET COLOR");
+			// 		dispatch(changeColor(color));
+			// 	});
+			// }
+
+			console.log("HHHHHHHHHHH");
+		},
+		[dispatch, socket]
+	);
+
 	return (
 		<div className='game__page'>
 			<div className='header'>
@@ -95,7 +110,7 @@ const GamePage = () => {
 			</div>
 			<div className='row m-0 my-5'>
 				<div className='col-2'>
-					<Players />
+					<Players socket={socket} />
 				</div>
 
 				<div className='col-7'>
@@ -106,7 +121,9 @@ const GamePage = () => {
 								type='color'
 								className='color__picker mr-2'
 								value={color}
-								onChange={(e) => dispatch(changeColor(e.target.value))}
+								onChange={(e) => {
+									dispatch(changeColor(e.target.value));
+								}}
 							/>
 							<input
 								type='range'

@@ -10,9 +10,10 @@
 	align-items: center;
 
 	.chat__body {
-		overflow: auto;
+		overflow-y: auto;
 		width: 100%;
 		flex: 1;
+		max-height: $height;
 
 		.content {
 			display: flex;
@@ -24,11 +25,22 @@
 			margin: 0px;
 			.name {
 				font-weight: bold;
+				max-width: 90px;
+				text-overflow: ellipsis;
+				overflow: hidden;
 			}
 
 			.message {
 				color: rgba(rgb(61, 61, 61), 0.8);
-				margin-left: 5px;
+				margin: 0px 0px 0px 5px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				flex: 1;
+				max-width: 150px;
+				font-size: 1rem;
+			}
+			.time {
+				font-size: 0.7rem;
 			}
 		}
 	}

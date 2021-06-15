@@ -37,5 +37,10 @@ export default (io) => {
 			let __tempObj = { x, y };
 			socket.broadcast.to(room).emit("drawing-listner", __tempObj);
 		});
+
+		socket.on("change-color", (color, room) => {
+			console.log("kk", room);
+			socket.broadcast.to(room).emit("set-color", color);
+		});
 	});
 };

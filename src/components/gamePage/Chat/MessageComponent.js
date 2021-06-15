@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-// import { addUser } from "../../../store/actions/AddUsersAtions";
-import { useDispatch } from "react-redux";
+import { removeUser } from "../../../store/actions/AddUsersAtions";
+import { useDispatch, useSelector } from "react-redux";
 
 const MessageComponent = ({ socket, username }) => {
 	const [messages, setMessages] = useState([]);
+	const { users } = useSelector((state) => state.UserReducer);
 
 	const [text, setText] = useState("");
 	const dispatch = useDispatch();
@@ -43,7 +44,29 @@ const MessageComponent = ({ socket, username }) => {
 		return () => {
 			if (socket) socket.disconnect();
 		};
-	}, [socket]);
+	}, [socket, dispatch]);
+
+	useEffect(() => {
+		if (!socket) return;
+		if (!users) return;
+
+		socket.on("delete-user-broadcast", (userId) => {
+			users.forEach((value) => {
+				if (value?.id === userId) {
+					const message = {
+						message: "Is removed",
+						removed: true,
+						userId: userId,
+						name: value?.name,
+						time: new Date(),
+					};
+					setMessages((prevState) => [...prevState, message]);
+
+					dispatch(removeUser(userId));
+				}
+			});
+		});
+	}, [users, socket, dispatch]);
 
 	const handleMessageSend = useCallback(
 		(e) => {
@@ -66,14 +89,20 @@ const MessageComponent = ({ socket, username }) => {
 				{messages.length > 0 &&
 					messages.map((value, i) => (
 						<p
-							className={`content ${value?.broadcast ? "text-success" : ""}`}
+							className={`content ${
+								value?.broadcast
+									? "text-success"
+									: value?.removed
+									? "text-danger"
+									: ""
+							}`}
 							key={i}>
-							<span>
+							<span className='d-flex'>
 								<span className='name'>{value.name}</span>
-								<span className='message'>{value.message}</span>
+								<p className='message'>{value.message}</p>
 							</span>
 							<span className='time'>
-								{new Date(value.time).toLocaleDateString()}
+								{new Date(value.time).toLocaleTimeString()}
 							</span>
 						</p>
 					))}
