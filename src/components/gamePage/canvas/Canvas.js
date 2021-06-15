@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
-const Canvas = ({ socket }) => {
+const Canvas = ({ socket, clearAll }) => {
 	const canvasRef = useRef(null);
 	const canvasOverFlowRef = useRef(null);
 	const contextRef = useRef(null);
 	const contextOverFlowRef = useRef(null);
+	const { color, drawAction, lineWidth } = useSelector(
+		(state) => state.UserReducer
+	);
 
 	const [state, setState] = useState({
 		offsetX: 0,
@@ -14,16 +18,17 @@ const Canvas = ({ socket }) => {
 	});
 
 	const [isDrawing, setIsDrawing] = useState(false);
-	const [type, setType] = useState("PEN");
+	const [type, setType] = useState("");
 
 	useEffect(() => {
 		const box = document.getElementById("canvas-box");
 		const canvas = canvasRef.current;
 		const canvas_overflow = canvasOverFlowRef.current;
 
+		console.log("ppppp", box.offsetWidth);
 		canvas.width = box.offsetWidth;
 		canvas.height = box.offsetHeight;
-		canvas.style.width = `100%`;
+		canvas.style.width = `${box.offsetWidth}px`;
 		canvas.style.height = `${box.offsetHeight}px`;
 
 		let canvasRect = canvas.getBoundingClientRect();
@@ -31,7 +36,6 @@ const Canvas = ({ socket }) => {
 		const context = canvas.getContext("2d");
 		context.lineJoin = context.lineCap = "round";
 		context.lineWidth = 1;
-		context.strokeStyle = "red";
 
 		const contextOverFlow = canvas_overflow.getContext("2d");
 		contextOverFlow.lineJoin = contextOverFlow.lineCap = "round";
@@ -44,7 +48,14 @@ const Canvas = ({ socket }) => {
 			offsetX: canvasRect.left,
 			offsetY: canvasRect.top,
 		});
-	}, []);
+	}, [clearAll]);
+
+	useEffect(() => {
+		setType(drawAction === "ERESER" ? "PEN" : drawAction);
+		if (drawAction === "ERESER") contextRef.current.strokeStyle = "#FFFFFF";
+		else contextRef.current.strokeStyle = color;
+		contextRef.current.lineWidth = lineWidth;
+	}, [drawAction, color, lineWidth]);
 
 	useEffect(() => {
 		if (!socket) return;
@@ -148,15 +159,17 @@ const Canvas = ({ socket }) => {
 	};
 
 	return (
-		<div id='canvas-box' className='canvas__container'>
-			<canvas
-				className='canvas'
-				onMouseDown={startDrawing}
-				onMouseUp={stopDrawing}
-				onMouseMove={drawing}
-				onMouseLeave={out}
-				ref={canvasRef}
-			/>
+		<div className='canvas__container'>
+			<div id='canvas-box'>
+				<canvas
+					className='canvas'
+					onMouseDown={startDrawing}
+					onMouseUp={stopDrawing}
+					onMouseMove={drawing}
+					onMouseLeave={out}
+					ref={canvasRef}
+				/>
+			</div>
 
 			<canvas
 				className='canvas canvas__overFlow'

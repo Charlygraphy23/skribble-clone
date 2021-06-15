@@ -3,15 +3,22 @@ import {
 	ADD_USER,
 	ADD_MY_SOCKET_ID,
 	ADD_LIST_USERS,
+	ADD_DRAW_ACTION,
+	ADD_COLOR,
+	ADD_LINE_WIDTH,
 } from "../actions/AddUsersAtions.js";
 
 let initialState = {
 	users: [],
 	socketId: "",
+	drawAction: "PEN",
+	color: "#000000",
+	lineWidth: 1,
 };
 
 export default (state = initialState, action) => {
-	const { userData, socketId, userLists } = action;
+	const { userData, socketId, userLists, drawAction, color, lineWidth } =
+		action;
 
 	switch (action.type) {
 		case ADD_USER:
@@ -28,6 +35,21 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				users: [...userLists, ...state.users],
+			};
+		case ADD_DRAW_ACTION:
+			return {
+				...state,
+				drawAction,
+			};
+		case ADD_COLOR:
+			return {
+				...state,
+				color,
+			};
+		case ADD_LINE_WIDTH:
+			return {
+				...state,
+				lineWidth,
 			};
 		default:
 			return state;

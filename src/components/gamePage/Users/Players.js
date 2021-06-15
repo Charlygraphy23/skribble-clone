@@ -10,7 +10,7 @@ const Players = () => {
 				users.map((value, i) => (
 					<div key={i} className='player__cards'>
 						<h4>
-							{value?.userName} {value?.socketId === socketId ? "(you)" : ""}
+							{value?.name} {value?.id === socketId ? "(you)" : ""}
 						</h4>
 						<span>Score</span>
 					</div>

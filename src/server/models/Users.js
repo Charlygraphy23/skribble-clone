@@ -1,6 +1,7 @@
 /* eslint import/no-anonymous-default-export: [2, {"allowArrowFunction": true}] */
-export default ({ users }) => {
+export default ({ id, name }) => {
 	return {
-		users: users,
+		id: id,
+		name: name,
 	};
 };

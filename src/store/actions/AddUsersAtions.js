@@ -1,6 +1,9 @@
 export const ADD_USER = "ADD_USER";
 export const ADD_MY_SOCKET_ID = "ADD_MY_SOCKET_ID";
 export const ADD_LIST_USERS = "ADD_LIST_USERS";
+export const ADD_DRAW_ACTION = "ADD_DRAW_ACTION";
+export const ADD_COLOR = "ADD_COLOR";
+export const ADD_LINE_WIDTH = "ADD_LINE_WIDTH";
 
 export const addUser = (userData) => {
 	return {
@@ -20,5 +23,24 @@ export const addListOfUsers = (userLists) => {
 	return {
 		type: ADD_LIST_USERS,
 		userLists,
+	};
+};
+
+export const changeDrawAction = (drawAction) => {
+	return {
+		type: ADD_DRAW_ACTION,
+		drawAction,
+	};
+};
+export const changeColor = (color) => {
+	return {
+		type: ADD_COLOR,
+		color,
+	};
+};
+export const changeLineWidth = (lineWidth) => {
+	return {
+		type: ADD_LINE_WIDTH,
+		lineWidth,
 	};
 };

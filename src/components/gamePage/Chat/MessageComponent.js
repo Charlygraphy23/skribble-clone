@@ -16,6 +16,7 @@ const MessageComponent = ({ socket, username }) => {
 		});
 
 		socket.on("new-messages", (messageData) => {
+			console.log({ messageData });
 			setMessages((prevState) => [...prevState, messageData]);
 		});
 
@@ -23,6 +24,26 @@ const MessageComponent = ({ socket, username }) => {
 			socket.disconnect();
 		};
 	}, [socket, dispatch]);
+
+	useEffect(() => {
+		if (!socket) return;
+
+		// add latest user to array
+		socket.on("user_joined-chat-message", (userData) => {
+			const message = {
+				message: "Just joined",
+				broadcast: true,
+				userId: userData?.id,
+				name: userData?.name,
+				time: new Date(),
+			};
+			setMessages((prevState) => [...prevState, message]);
+		});
+
+		return () => {
+			if (socket) socket.disconnect();
+		};
+	}, [socket]);
 
 	const handleMessageSend = useCallback(
 		(e) => {
@@ -45,16 +66,14 @@ const MessageComponent = ({ socket, username }) => {
 				{messages.length > 0 &&
 					messages.map((value, i) => (
 						<p
-							className={`content ${
-								value?.broadCastMessage ? "text-success" : ""
-							}`}
+							className={`content ${value?.broadcast ? "text-success" : ""}`}
 							key={i}>
 							<span>
-								<span className='name'>{value.userName}</span>
+								<span className='name'>{value.name}</span>
 								<span className='message'>{value.message}</span>
 							</span>
 							<span className='time'>
-								{new Date(value.createdAt).toLocaleDateString()}
+								{new Date(value.time).toLocaleDateString()}
 							</span>
 						</p>
 					))}

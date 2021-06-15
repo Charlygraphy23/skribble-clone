@@ -1,14 +1,22 @@
 .canvas__container {
 	position: relative;
 	width: 100%;
-	border: 1px solid rgba(0, 0, 0, 0.3);
+	// border: 1px solid rgba(0, 0, 0, 0.3);
 	min-width: 700px;
-	height: 100%;
+	// height: 100%;
 	min-height: $height;
 	border-radius: 10px;
-	box-shadow: 0px 5px 10px rgba($color: #000000, $alpha: 0.2);
+	// box-shadow: 0px 5px 10px rgba($color: #000000, $alpha: 0.2);
 
 	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	#canvas-box {
+		width: 100%;
+		height: $height;
+	}
 
 	.canvas {
 		background: white;
