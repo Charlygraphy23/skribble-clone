@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
+const STROKE_ADJUST_Y = 13;
+
 const Canvas = ({ socket, clearAll }) => {
 	const canvasRef = useRef(null);
 	const canvasOverFlowRef = useRef(null);
@@ -30,6 +32,7 @@ const Canvas = ({ socket, clearAll }) => {
 		canvas.height = box.offsetHeight;
 		canvas.style.width = `${box.offsetWidth}px`;
 		canvas.style.height = `${box.offsetHeight}px`;
+		// canvas.style.cursor = "pointer";
 
 		let canvasRect = canvas.getBoundingClientRect();
 
@@ -87,7 +90,7 @@ const Canvas = ({ socket, clearAll }) => {
 		if (type === "PEN") {
 			let x = e.clientX - state.offsetX;
 			let y = e.clientY - state.offsetY;
-			contextRef.current.moveTo(x, y);
+			contextRef.current.moveTo(x, y + STROKE_ADJUST_Y);
 			if (socket) {
 				let __tempObj = { room: "demo", x, y };
 				socket.emit("start-drawing-trigger", __tempObj);
@@ -123,12 +126,17 @@ const Canvas = ({ socket, clearAll }) => {
 		contextRef.current.closePath();
 	};
 	const drawing = (e) => {
+		const box = document.getElementById("canvas-box");
+
+		if (drawAction === "ERESER") box.style.cursor = `url("erase.svg"), auto`;
+		else box.style.cursor = `url("pen.svg"), auto`;
+
 		if (!isDrawing) return;
 
 		if (type === "PEN") {
 			let x = e.clientX - state.offsetX;
 			let y = e.clientY - state.offsetY;
-			contextRef.current.lineTo(x, y);
+			contextRef.current.lineTo(x, y + STROKE_ADJUST_Y);
 			contextRef.current.stroke();
 
 			if (socket) {

@@ -42,5 +42,16 @@ export default (io) => {
 			console.log("kk", room);
 			socket.broadcast.to(room).emit("set-color", color);
 		});
+
+		socket.on("change-brush", (brushType, room) => {
+			socket.broadcast.to(room).emit("set-brush", brushType);
+		});
+
+		socket.on("clear-all", (clearAll, room) => {
+			socket.broadcast.to(room).emit("set-clear-all", clearAll);
+		});
+		socket.on("brush-size", (size, room) => {
+			socket.broadcast.to(room).emit("set-brush-size", size);
+		});
 	});
 };

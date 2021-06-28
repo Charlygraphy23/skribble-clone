@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import Canvas from "../../components/gamePage/canvas/Canvas";
 import MessageComponent from "../../components/gamePage/Chat/MessageComponent";
 import Players from "../../components/gamePage/Users/Players";
-import { SOCKET_URL } from "../../config/app.config";
+import { SOCKET_URL, COLOR_LIST, BRUSH_SIZE } from "../../config/app.config";
 import {
 	addMySocketID,
 	addListOfUsers,
@@ -40,6 +40,7 @@ const GamePage = () => {
 		});
 
 		tempSocket.connect();
+		console.log(COLOR_LIST);
 
 		tempSocket.on("connect", () => {
 			dispatch(addMySocketID(tempSocket?.id));
@@ -73,24 +74,71 @@ const GamePage = () => {
 			dispatch(addListOfUsers(data));
 		});
 
+		socket.on("set-color", (color) => {
+			console.log("SET COLOR");
+			dispatch(changeColor(color));
+		});
+		socket.on("set-brush", (brushType) => {
+			console.log("SET BRUSH");
+			dispatch(changeDrawAction(brushType));
+		});
+		socket.on("set-clear-all", (clear) => {
+			console.log("SET CLEAR_ALL");
+			setClearAll((prevState) => !prevState);
+		});
+		socket.on("set-brush-size", (size) => {
+			console.log("SET BRUSH_SIZE");
+			dispatch(changeLineWidth(size));
+		});
+
 		return () => {
 			if (socket) socket.disconnect();
 		};
 	}, [socket, dispatch]);
 
-	const handleColorChnage = useCallback(
-		(e) => {
-			// if (socket) {
-			// 	socket.emit("change-color", e.target.value, ROOM);
-			// 	socket.on("set-color", (color) => {
-			// 		console.log("SET COLOR");
-			// 		dispatch(changeColor(color));
-			// 	});
-			// }
+	// handle color change value
+	const handleColorChange = useCallback(
+		(colorValue) => {
+			dispatch(changeColor(colorValue));
 
-			console.log("HHHHHHHHHHH");
+			if (socket) {
+				socket.emit("change-color", colorValue, ROOM);
+			}
 		},
 		[dispatch, socket]
+	);
+
+	// handle brush type change
+	const handleBrushChange = useCallback(
+		(brushType) => {
+			dispatch(changeDrawAction(brushType));
+
+			if (socket) {
+				socket.emit("change-brush", brushType, ROOM);
+			}
+		},
+		[dispatch, socket]
+	);
+
+	// handle function to clean slate
+	const handleClearAll = useCallback(() => {
+		setClearAll((prevState) => !prevState);
+
+		if (socket) {
+			socket.emit("clear-all", clearAll, ROOM);
+		}
+	}, [setClearAll, socket, clearAll]);
+
+	// handle function to clean slate
+	const handleBrushSize = useCallback(
+		(brushSize) => {
+			dispatch(changeLineWidth(brushSize));
+
+			if (socket) {
+				socket.emit("brush-size", brushSize, ROOM);
+			}
+		},
+		[socket, dispatch]
 	);
 
 	return (
@@ -117,41 +165,62 @@ const GamePage = () => {
 					<Canvas socket={socket} clearAll={clearAll} />
 					<div className='row m-0 canvas__footer justify-content-between mt-1'>
 						<div className='d-flex '>
-							<input
-								type='color'
-								className='color__picker mr-2'
-								value={color}
-								onChange={(e) => {
-									dispatch(changeColor(e.target.value));
-								}}
-							/>
-							<input
-								type='range'
-								id='volume'
-								name='volume'
-								min='0'
-								max='40'
-								value={lineWidth}
-								onChange={(e) =>
-									dispatch(changeLineWidth(e.target.value))
-								}></input>
+							<div className='color__grid'>
+								{COLOR_LIST.length > 0 &&
+									COLOR_LIST.map((value, i) => (
+										<span
+											key={i}
+											style={{ backgroundColor: `${value}` }}
+											onClick={() => handleColorChange(value)}></span>
+									))}
+							</div>
+
+							<div className='d-flex justify-content-center align-items-center ml-4 dropup'>
+								<i
+									className='bi bi-brush-fill dropdown-toggle'
+									id='brushDropdown'
+									role='button'
+									data-toggle='dropdown'
+									aria-haspopup='true'
+									aria-expanded='false'></i>
+
+								<div className='dropdown-menu ' aria-labelledby='brushDropdown'>
+									<div className='d-flex justify-content-center align-items-center'>
+										{BRUSH_SIZE.map((value, i) => (
+											<span
+												className='brush__size'
+												style={{
+													margin: "2px",
+													width: `${value * 2}px`,
+													height: `${value * 2}px`,
+												}}
+												key={i}
+												onClick={() => handleBrushSize(value)}>
+												<span className='value'>{value}</span>
+											</span>
+										))}
+									</div>
+								</div>
+							</div>
 						</div>
-						<div className='buttons d-flex justify-content-center'>
-							<button
-								className={drawAction === "PEN" ? "pen active" : "pen"}
-								onClick={() => dispatch(changeDrawAction("PEN"))}>
-								<i className='bi bi-pen-fill'></i>
-							</button>
-							<button
-								className={drawAction === "ERESER" ? "ereser active" : "ereser"}
-								onClick={() => dispatch(changeDrawAction("ERESER"))}>
-								<i className='bi bi-eraser-fill'></i>
-							</button>
-							<button
-								className='clearAll'
-								onClick={() => setClearAll((prevState) => !prevState)}>
-								<i className='bi bi-trash-fill'></i>
-							</button>
+						<div className='buttons d-flex justify-content-center align-items-center'>
+							<div>
+								<button
+									className={drawAction === "PEN" ? "pen active" : "pen"}
+									onClick={() => handleBrushChange("PEN")}>
+									<i className='bi bi-pen-fill'></i>
+								</button>
+								<button
+									className={
+										drawAction === "ERESER" ? "ereser active" : "ereser"
+									}
+									onClick={() => handleBrushChange("ERESER")}>
+									<i className='bi bi-eraser-fill'></i>
+								</button>
+								<button className='clearAll' onClick={() => handleClearAll()}>
+									<i className='bi bi-trash-fill'></i>
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
