@@ -5,6 +5,9 @@ export const ADD_DRAW_ACTION = "ADD_DRAW_ACTION";
 export const ADD_COLOR = "ADD_COLOR";
 export const ADD_LINE_WIDTH = "ADD_LINE_WIDTH";
 export const REMOVE_USER = "REMOVE_USER";
+export const ADD_CURRENT_PLAYING_USER = "ADD_CURRENT_PLAYING_USER";
+export const ADD_WORD = "ADD_WORD";
+export const ADD_USERNAME = "ADD_USERNAME";
 
 export const addUser = (userData) => {
 	return {
@@ -50,5 +53,26 @@ export const removeUser = (userID) => {
 	return {
 		type: REMOVE_USER,
 		userID,
+	};
+};
+
+export const addCurrentlyPlayedUser = (currentlyPlayedUser) => {
+	return {
+		type: ADD_CURRENT_PLAYING_USER,
+		currentlyPlayedUser,
+	};
+};
+
+export const addWinningWord = (word) => {
+	return {
+		type: ADD_WORD,
+		word,
+	};
+};
+
+export const addUserName = (username) => {
+	return {
+		type: ADD_USERNAME,
+		username,
 	};
 };

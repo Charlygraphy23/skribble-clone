@@ -3,16 +3,34 @@
 	height: $height;
 	padding: 4px;
 	overflow: auto;
+	border-radius: 4px;
 
 	.player__cards {
 		display: flex;
 		flex-direction: column;
-		background-color: rgb(212, 212, 212);
+
 		border-radius: 4px;
 		padding: 5px;
-		margin-bottom: 4px;
 		h4 {
 			font-size: 1.1rem;
+		}
+	}
+
+	.pen {
+		animation: mymove 2s infinite ease-in-out;
+		margin-right: 0.4rem;
+		padding: 0.4rem;
+	}
+
+	@keyframes mymove {
+		0% {
+			transform: rotate(0deg);
+		}
+		55% {
+			transform: rotate(-30deg);
+		}
+		100% {
+			transform: rotate(0deg);
 		}
 	}
 }

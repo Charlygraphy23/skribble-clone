@@ -4,6 +4,7 @@ import {
 	kiskUserOutFromRoom,
 	messageSend,
 	sendAllUserDataToRoom,
+	handleStartGame,
 } from "./Handlers.js";
 export default (io) => {
 	io.on("connection", (socket) => {
@@ -52,6 +53,9 @@ export default (io) => {
 		});
 		socket.on("brush-size", (size, room) => {
 			socket.broadcast.to(room).emit("set-brush-size", size);
+		});
+		socket.on("start-game", (room, rounds, time) => {
+			handleStartGame(room, rounds, socket, io, time);
 		});
 	});
 };

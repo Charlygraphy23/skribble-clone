@@ -1,12 +1,13 @@
 import React from "react";
 import GamePage from "../../pages/gamePage/GamePage";
+import { useSelector } from "react-redux";
+import HomePage from "../../pages/homePage/HomePage";
 
 const AuthRoute = () => {
-	return (
-		<>
-			<GamePage />
-		</>
-	);
+	const { username } = useSelector((state) => state.UserReducer);
+
+	if (username) return <GamePage />;
+	return <HomePage />;
 };
 
 export default AuthRoute;

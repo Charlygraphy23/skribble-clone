@@ -7,6 +7,9 @@ import {
 	ADD_COLOR,
 	ADD_LINE_WIDTH,
 	REMOVE_USER,
+	ADD_CURRENT_PLAYING_USER,
+	ADD_WORD,
+	ADD_USERNAME,
 } from "../actions/AddUsersAtions.js";
 
 let initialState = {
@@ -15,6 +18,9 @@ let initialState = {
 	drawAction: "PEN",
 	color: "#000000",
 	lineWidth: 1,
+	currentlyPlayedUser: null,
+	word: "",
+	username: "",
 };
 
 export default (state = initialState, action) => {
@@ -26,6 +32,9 @@ export default (state = initialState, action) => {
 		color,
 		lineWidth,
 		userID,
+		currentlyPlayedUser,
+		word,
+		username,
 	} = action;
 
 	switch (action.type) {
@@ -64,6 +73,22 @@ export default (state = initialState, action) => {
 				...state,
 				users: state.users.filter((value) => value?.id !== userID),
 			};
+		case ADD_CURRENT_PLAYING_USER:
+			return {
+				...state,
+				currentlyPlayedUser,
+			};
+		case ADD_WORD:
+			return {
+				...state,
+				word,
+			};
+		case ADD_USERNAME:
+			return {
+				...state,
+				username,
+			};
+
 		default:
 			return state;
 	}

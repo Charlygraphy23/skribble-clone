@@ -1,0 +1,14 @@
+#game_over_modal {
+	.modal-content {
+		background: transparent;
+		border: none;
+
+		.modal-body {
+			color: White;
+			text-align: center;
+			.head__text {
+				font-size: 3rem;
+			}
+		}
+	}
+}

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const MessageComponent = ({ socket, username }) => {
 	const [messages, setMessages] = useState([]);
-	const { users } = useSelector((state) => state.UserReducer);
+	const { users, word } = useSelector((state) => state.UserReducer);
 
 	const [text, setText] = useState("");
 	const dispatch = useDispatch();
@@ -99,7 +99,20 @@ const MessageComponent = ({ socket, username }) => {
 							key={i}>
 							<span className='d-flex'>
 								<span className='name'>{value.name}</span>
-								<p className='message'>{value.message}</p>
+								<p
+									className={
+										word === value?.message ? "text-info message" : "message"
+									}>
+									{value.message}
+								</p>
+								{
+									// when word gets matched
+								}
+								{value.message === word && (
+									<span className='time ml-1'>
+										<small>matched</small>
+									</span>
+								)}
 							</span>
 							<span className='time'>
 								{new Date(value.time).toLocaleTimeString()}

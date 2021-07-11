@@ -1,39 +1,32 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { removeUser } from "../../../store/actions/AddUsersAtions";
+import React from "react";
+import { useSelector } from "react-redux";
+// import { removeUser } from "../../../store/actions/AddUsersAtions";
 
-const Players = ({ socket }) => {
-	const { users, socketId } = useSelector((state) => state.UserReducer);
-	const dispatch = useDispatch();
-
-	// useEffect(() => {
-	// 	if (!socket) return;
-
-	// 	socket.on("delete-user-broadcast", (userId) => {
-	// 		debugger;
-	// 		dispatch(removeUser(userId));
-	// 	});
-
-	// 	return () => {
-	// 		if (socket) socket.disconnect();
-	// 	};
-	// }, [socket, dispatch]);
-
-	// useEffect(() => {
-	// 	if (!users) return;
-
-	// 	console.log(users);
-	// }, [users]);
+const Players = () => {
+	const { users, socketId, currentlyPlayedUser } = useSelector(
+		(state) => state.UserReducer
+	);
+	// const dispatch = useDispatch();
 
 	return (
 		<div className='players'>
 			{users.length > 0 &&
 				users.map((value, i) => (
-					<div key={i} className='player__cards'>
-						<h4>
-							{value?.name} {value?.id === socketId ? "(you)" : ""}
-						</h4>
-						<span>Score</span>
+					<div
+						key={i}
+						className='d-flex justify-content-between align-items-center mb-1'
+						style={{ backgroundColor: "rgb(212, 212, 212)" }}>
+						<div className='player__cards'>
+							<h4>
+								{value?.name} {value?.id === socketId ? "(you)" : ""}
+							</h4>
+							<span>Score</span>
+						</div>
+						{currentlyPlayedUser?.id === value?.id && (
+							<span className='pen'>
+								<i className='bi bi-pen-fill'></i>
+							</span>
+						)}
 					</div>
 				))}
 		</div>

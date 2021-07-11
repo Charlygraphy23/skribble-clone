@@ -8,9 +8,8 @@ const Canvas = ({ socket, clearAll }) => {
 	const canvasOverFlowRef = useRef(null);
 	const contextRef = useRef(null);
 	const contextOverFlowRef = useRef(null);
-	const { color, drawAction, lineWidth } = useSelector(
-		(state) => state.UserReducer
-	);
+	const { color, drawAction, lineWidth, currentlyPlayedUser, socketId } =
+		useSelector((state) => state.UserReducer);
 
 	const [state, setState] = useState({
 		offsetX: 0,
@@ -53,6 +52,12 @@ const Canvas = ({ socket, clearAll }) => {
 		});
 	}, [clearAll]);
 
+	// useEffect(() => {
+	// 	console.log("GGG-GGG", contextRef.current.height);
+
+	// 	contextRef.current.clearRect(0, 0, 700, 500);
+	// }, [clearAll]);
+
 	useEffect(() => {
 		setType(drawAction === "ERESER" ? "PEN" : drawAction);
 		if (drawAction === "ERESER") contextRef.current.strokeStyle = "#FFFFFF";
@@ -84,6 +89,10 @@ const Canvas = ({ socket, clearAll }) => {
 	}, [socket]);
 
 	const startDrawing = (e) => {
+		if (currentlyPlayedUser?.id !== socketId) {
+			setIsDrawing(false);
+			return;
+		}
 		setIsDrawing(true);
 		contextRef.current.beginPath();
 
@@ -105,6 +114,10 @@ const Canvas = ({ socket, clearAll }) => {
 		}
 	};
 	const stopDrawing = (e) => {
+		if (currentlyPlayedUser?.id !== socketId) {
+			setIsDrawing(false);
+			return;
+		}
 		setIsDrawing(false);
 		// if (type === "PEN") ;
 
@@ -126,9 +139,15 @@ const Canvas = ({ socket, clearAll }) => {
 		contextRef.current.closePath();
 	};
 	const drawing = (e) => {
+		if (currentlyPlayedUser?.id !== socketId) {
+			setIsDrawing(false);
+			return;
+		}
 		const box = document.getElementById("canvas-box");
 
 		if (drawAction === "ERESER") box.style.cursor = `url("erase.svg"), auto`;
+		else if (currentlyPlayedUser?.id !== socketId)
+			box.style.cursor = `url("dot.svg"), auto`;
 		else box.style.cursor = `url("pen.svg"), auto`;
 
 		if (!isDrawing) return;

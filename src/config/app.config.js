@@ -18,6 +18,9 @@ export const COLOR_LIST = [
 	"#207398",
 	"#46B2E0",
 	"#3944F7",
+	"#758283",
+	"#242B2E",
+	"#0D0D0D",
 ];
 
 export const BRUSH_SIZE = [1, 2, 3, 7, 10, 15, 20];
