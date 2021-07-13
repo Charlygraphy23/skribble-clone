@@ -19,7 +19,7 @@ import GameOverModal from "../../components/Modal/GameOverModal";
 import clockSvg from "../../assets/loader-line.svg";
 
 const ROOM = "demo";
-const PLAY_TIME = 15000;
+const PLAY_TIME = 40000;
 const GamePage = () => {
 	const [socket, setSocket] = useState(null);
 	// const [username, setUsername] = useState("");
@@ -54,7 +54,6 @@ const GamePage = () => {
 		});
 
 		tempSocket.connect();
-		console.log(COLOR_LIST);
 
 		tempSocket.on("connect", () => {
 			dispatch(addMySocketID(tempSocket?.id));
@@ -85,30 +84,23 @@ const GamePage = () => {
 
 		let init = null;
 		socket.emit("getAllUsers", "demo", (data) => {
-			console.log(data);
-
 			dispatch(addListOfUsers(data));
 		});
 
 		socket.on("set-color", (color) => {
-			console.log("SET COLOR");
 			dispatch(changeColor(color));
 		});
 		socket.on("set-brush", (brushType) => {
-			console.log("SET BRUSH");
 			dispatch(changeDrawAction(brushType));
 		});
 		socket.on("set-clear-all", (clear) => {
-			console.log("SET CLEAR_ALL");
 			setClearAll((prevState) => !prevState);
 		});
 		socket.on("set-brush-size", (size) => {
-			console.log("SET BRUSH_SIZE");
 			dispatch(changeLineWidth(size));
 		});
 
 		socket.on("on-game-start", (data) => {
-			console.log("Start game Data", data);
 			dispatch(addCurrentlyPlayedUser(data?.currentPlayerInfo));
 			setCurrentRounds(data?.currentRound);
 			socket.emit("clear-all", clearAll, ROOM);
@@ -122,17 +114,18 @@ const GamePage = () => {
 			setMessage("");
 
 			init = setInterval(() => {
-				console.log("Here it goes");
 				setPlayingTime((prevState) => prevState + 1);
 			}, 1000);
 		});
 		socket.on("on-playing-user-change", (data) => {
-			console.log("on-playing-user-change", data);
 			dispatch(addCurrentlyPlayedUser(data?.currentPlayerInfo));
 			setCurrentRounds(data?.currentRound);
 			setWord(data?.word);
 			setPlayingStatus(data?.status);
 			socket.emit("clear-all", clearAll, ROOM);
+
+			//dispatch word
+			dispatch(addWinningWord(data?.word));
 
 			setHelpingWord("");
 			if (data?.status === "OVER") {
@@ -146,7 +139,6 @@ const GamePage = () => {
 			clearInterval(init); // clearing previous timer
 			setPlayingTime(1);
 			init = setInterval(() => {
-				console.log("Here it goes");
 				setPlayingTime((prevState) => prevState + 1);
 			}, 1000);
 		});

@@ -26,7 +26,6 @@ const Canvas = ({ socket, clearAll }) => {
 		const canvas = canvasRef.current;
 		const canvas_overflow = canvasOverFlowRef.current;
 
-		console.log("ppppp", box.offsetWidth);
 		canvas.width = box.offsetWidth;
 		canvas.height = box.offsetHeight;
 		canvas.style.width = `${box.offsetWidth}px`;
@@ -53,7 +52,7 @@ const Canvas = ({ socket, clearAll }) => {
 	}, [clearAll]);
 
 	// useEffect(() => {
-	// 	console.log("GGG-GGG", contextRef.current.height);
+	//
 
 	// 	contextRef.current.clearRect(0, 0, 700, 500);
 	// }, [clearAll]);
@@ -69,7 +68,6 @@ const Canvas = ({ socket, clearAll }) => {
 		if (!socket) return;
 
 		socket.on("drawing-listner", ({ x, y }) => {
-			console.log("YYYYY");
 			contextRef.current.lineTo(x, y);
 			contextRef.current.stroke();
 		});

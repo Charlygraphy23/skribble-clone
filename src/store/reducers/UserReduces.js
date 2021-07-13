@@ -10,6 +10,7 @@ import {
 	ADD_CURRENT_PLAYING_USER,
 	ADD_WORD,
 	ADD_USERNAME,
+	UPDATE_USER_SCORE,
 } from "../actions/AddUsersAtions.js";
 
 let initialState = {
@@ -89,7 +90,25 @@ export default (state = initialState, action) => {
 				username,
 			};
 
+		case UPDATE_USER_SCORE:
+			return {
+				...state,
+				users: updateScore(state.users, action.userId, action.points),
+			};
+
 		default:
 			return state;
 	}
+};
+
+const updateScore = (users, userID, points) => {
+	let __tempUsers = [...users];
+
+	__tempUsers.forEach((value, i) => {
+		if (value?.id === userID) {
+			value.scores.points = points;
+		}
+	});
+
+	return __tempUsers;
 };

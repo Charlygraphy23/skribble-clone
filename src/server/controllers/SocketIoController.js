@@ -5,6 +5,7 @@ import {
 	messageSend,
 	sendAllUserDataToRoom,
 	handleStartGame,
+	handleUserScore,
 } from "./Handlers.js";
 export default (io) => {
 	io.on("connection", (socket) => {
@@ -40,7 +41,6 @@ export default (io) => {
 		});
 
 		socket.on("change-color", (color, room) => {
-			console.log("kk", room);
 			socket.broadcast.to(room).emit("set-color", color);
 		});
 
@@ -56,6 +56,10 @@ export default (io) => {
 		});
 		socket.on("start-game", (room, rounds, time) => {
 			handleStartGame(room, rounds, socket, io, time);
+		});
+
+		socket.on("guessed_word", ({ id, room }) => {
+			handleUserScore(id, room, socket, io);
 		});
 	});
 };

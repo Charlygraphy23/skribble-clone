@@ -1,12 +1,25 @@
-import React from "react";
-import { useSelector } from "react-redux";
-// import { removeUser } from "../../../store/actions/AddUsersAtions";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserScore } from "../../../store/actions/AddUsersAtions";
 
-const Players = () => {
+const Players = ({ socket }) => {
 	const { users, socketId, currentlyPlayedUser } = useSelector(
 		(state) => state.UserReducer
 	);
-	// const dispatch = useDispatch();
+
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (!socket) return;
+
+		socket.on("get_points", (data) => {
+			dispatch(updateUserScore(data));
+		});
+
+		return () => {
+			if (socket) socket.disconnect();
+		};
+	}, [socket, dispatch]);
 
 	return (
 		<div className='players'>
@@ -20,7 +33,7 @@ const Players = () => {
 							<h4>
 								{value?.name} {value?.id === socketId ? "(you)" : ""}
 							</h4>
-							<span>Score</span>
+							<span>Score : {value?.scores?.points}</span>
 						</div>
 						{currentlyPlayedUser?.id === value?.id && (
 							<span className='pen'>

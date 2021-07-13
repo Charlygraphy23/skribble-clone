@@ -15,6 +15,10 @@ export const joinRoom = ({ io, socket, username, roomName }) => {
 	const userData = {
 		id: socket?.id,
 		name: username,
+		scores: {
+			guess: false,
+			points: 0,
+		},
 	};
 	users.push(userData);
 
@@ -22,6 +26,8 @@ export const joinRoom = ({ io, socket, username, roomName }) => {
 		...roomInfo,
 		users: users,
 	};
+
+	//
 
 	socket.broadcast.to(roomName).emit("user_joined", userData);
 	io.in(roomName).emit("user_joined-chat-message", userData);
@@ -60,19 +66,14 @@ export const messageSend = ({ userName, room, message, io, socket }) => {
 
 export const sendAllUserDataToRoom = ({ socket, io, room, cb }) => {
 	let data = rooms[room].users;
-	console.log("LL", socket.id);
-	console.log("------", data);
 
 	cb(data);
 };
 
 export const handleStartGame = (roomName, rounds, socket, io, time) => {
-	console.log("Game Starting");
-
 	if (rooms[roomName]?.users.length <= 0) return;
 	if (rooms[roomName]?.status === ROOM_PLAYER_STATUS.PLAYING) return;
 
-	console.log("User Available");
 	rooms[roomName].currentPlayerIndex = 0; // this player is playing game now (default 0)
 	rooms[roomName].rounds = Number(rounds); // total rounds from host client
 	rooms[roomName].currentRound = 1; // current round game is running  (default 2)
@@ -92,21 +93,56 @@ export const handleStartGame = (roomName, rounds, socket, io, time) => {
 	// reseting second
 	io.in(roomName).emit("on-game-start", obj);
 
+	// resertting all scores for users
+	rooms[roomName].users.forEach((value, i) => {
+		value.scores = {
+			guess: false,
+			points: 0,
+		};
+	});
+
 	let intervalId = setInterval(() => {
 		if (
 			rooms[roomName].status === ROOM_PLAYER_STATUS.OVER ||
 			!rooms[roomName].users[rooms[roomName].currentPlayerIndex]
 		) {
-			console.log("OVER", rooms);
 			clearInterval(rooms[roomName].intervalId);
 			rooms[roomName].intervalId = 0;
 			return;
 		}
 		startIntervalsForARoom(roomName, io);
-		// console.log("KKK", rooms[roomName].currentRound);
+		//
 	}, Number(time));
 
 	rooms[roomName].intervalId = intervalId;
+};
+
+export const handleUserScore = (id, room, socket, io) => {
+	let __tempPoint = 0;
+	let flag = false;
+	rooms[room].users.forEach((value, i) => {
+		if (value?.id === id && !value.scores.guess) {
+			__tempPoint = Number(value.scores.points) + 10;
+			value.scores.points = __tempPoint;
+			value.scores.guess = true;
+			flag = true;
+
+			// after increase user point we need to close the round
+			if (
+				users.filter(
+					(value, j) =>
+						j !== rooms[room].currentPlayerIndex && value?.scores?.guess
+				).length ===
+				users.length - 1
+			) {
+				// then close the round
+				startIntervalsForARoom(room, io);
+			}
+		}
+	});
+
+	if (flag)
+		io.to(room).emit("get_points", { id: socket.id, points: __tempPoint });
 };
 
 const startIntervalsForARoom = (roomName, io) => {
@@ -117,16 +153,16 @@ const startIntervalsForARoom = (roomName, io) => {
 
 		if (rooms[roomName].currentRound >= rooms[roomName].rounds) {
 			// when round gets over
-			console.log("Rounds", rooms[roomName].currentRound);
+
 			rooms[roomName].status = ROOM_PLAYER_STATUS.OVER;
 		} else {
 			// current round increasing
-			console.log("Rounds else", rooms[roomName].currentRound);
+
 			rooms[roomName].currentRound += 1;
 			rooms[roomName].currentPlayerIndex = 0;
 		}
 	}
-	// console.log("Rounds outside", rooms[roomName].users.length);
+	//
 	const random_Word = getRandomWord();
 	let obj = {
 		currentPlayerInfo: {
@@ -138,6 +174,12 @@ const startIntervalsForARoom = (roomName, io) => {
 		word: random_Word,
 	};
 	io.in(roomName).emit("on-playing-user-change", obj);
+	rooms[roomName].users.forEach((value, i) => {
+		value.scores = {
+			guess: false,
+			points: 0,
+		};
+	});
 };
 
 const getRandomWord = () => {

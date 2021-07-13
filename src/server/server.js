@@ -17,6 +17,4 @@ app.get("/", (req, res) => {
 
 app.use(express.json());
 
-server.listen(PORT, () => {
-	console.log("App is listening " + PORT);
-});
+server.listen(process.env.PORT || PORT, () => {});

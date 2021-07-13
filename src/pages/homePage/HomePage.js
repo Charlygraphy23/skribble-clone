@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import HomeNav from "../../components/HomePage/HomeNav";
 import { addUserName } from "../../store/actions/AddUsersAtions";
@@ -7,6 +7,11 @@ const HomePage = () => {
 	const [username, setUsername] = useState("");
 
 	const dispatch = useDispatch();
+	const ref = useRef();
+
+	useEffect(() => {
+		if (ref.current) ref.current.focus();
+	}, []);
 
 	const handleSubmit = useCallback(() => {
 		if (!username) return;
@@ -26,6 +31,7 @@ const HomePage = () => {
 				<div className='homePage__body'>
 					<form action='#' className='homePage__form' onSubmit={handleSubmit}>
 						<input
+							ref={ref}
 							type='text'
 							className='input__field'
 							placeholder='Enter your name'
@@ -39,6 +45,7 @@ const HomePage = () => {
 					</form>
 				</div>
 			</div>
+			<p className='footer__later'>This is only for learning purposes.</p>
 		</div>
 	);
 };

@@ -8,6 +8,7 @@ export const REMOVE_USER = "REMOVE_USER";
 export const ADD_CURRENT_PLAYING_USER = "ADD_CURRENT_PLAYING_USER";
 export const ADD_WORD = "ADD_WORD";
 export const ADD_USERNAME = "ADD_USERNAME";
+export const UPDATE_USER_SCORE = "UPDATE_USER_SCORE";
 
 export const addUser = (userData) => {
 	return {
@@ -74,5 +75,13 @@ export const addUserName = (username) => {
 	return {
 		type: ADD_USERNAME,
 		username,
+	};
+};
+
+export const updateUserScore = ({ id, points }) => {
+	return {
+		type: UPDATE_USER_SCORE,
+		userId: id,
+		points: points,
 	};
 };

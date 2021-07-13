@@ -17,7 +17,6 @@ const MessageComponent = ({ socket, username }) => {
 		});
 
 		socket.on("new-messages", (messageData) => {
-			console.log({ messageData });
 			setMessages((prevState) => [...prevState, messageData]);
 		});
 
@@ -72,6 +71,9 @@ const MessageComponent = ({ socket, username }) => {
 		(e) => {
 			e.preventDefault();
 			if (!text) return;
+			if (text === word) {
+				socket.emit("guessed_word", { id: socket.id, room: "demo" });
+			}
 			socket.emit("message-send", {
 				userName: username,
 				room: "demo",
@@ -80,7 +82,7 @@ const MessageComponent = ({ socket, username }) => {
 
 			setText("");
 		},
-		[text, username, socket]
+		[text, username, socket, word]
 	);
 
 	return (
@@ -88,7 +90,7 @@ const MessageComponent = ({ socket, username }) => {
 			<div className='chat__body'>
 				{messages.length > 0 &&
 					messages.map((value, i) => (
-						<p
+						<div
 							className={`content ${
 								value?.broadcast
 									? "text-success"
@@ -97,7 +99,7 @@ const MessageComponent = ({ socket, username }) => {
 									: ""
 							}`}
 							key={i}>
-							<span className='d-flex'>
+							<div className='d-flex'>
 								<span className='name'>{value.name}</span>
 								<p
 									className={
@@ -113,11 +115,11 @@ const MessageComponent = ({ socket, username }) => {
 										<small>matched</small>
 									</span>
 								)}
-							</span>
+							</div>
 							<span className='time'>
 								{new Date(value.time).toLocaleTimeString()}
 							</span>
-						</p>
+						</div>
 					))}
 			</div>
 
