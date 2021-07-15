@@ -31,6 +31,17 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## This project only for learning purposes
 
+## Stack
+
+- React (create-react-app)
+- React router dom
+- Redux
+- Scss
+- Firebase (Hosting)
+- Heroku (Bakend Hosting)
+- Node (Express Js)
+- Socket IO
+
 ## Demo -
 
 here the url : [Demo App](https://skribble-cb4b6.web.app)
