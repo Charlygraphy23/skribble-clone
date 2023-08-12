@@ -48,6 +48,9 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 here the url : [Demo App](https://skribble-cb4b6.web.app)
 
+***Note it will take more than 30 sec to connect to server since i'm using onrender free tire. [onrender](https://render.com/docs/free#free-web-services)
+
+
 ## preview
 
 ![alt text](https://github.com/Charlygraphy23/skribble-clone/blob/main/screenshot/Capture.PNG?raw=true)
