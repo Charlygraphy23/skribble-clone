@@ -1,5 +1,6 @@
 // Client CONFIG
 export const SOCKET_URL = "https://skribble-backend.herokuapp.com/";
+//  "https://skribble-backend.herokuapp.com/";
 
 export const COLOR_LIST = [
 	"#FF6263",
