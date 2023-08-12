@@ -17,6 +17,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import GameOverModal from "../../components/Modal/GameOverModal";
 import clockSvg from "../../assets/loader-line.svg";
+import { AppNotification } from "../../config/notification";
 
 const ROOM = "demo";
 const PLAY_TIME = 40000;
@@ -45,6 +46,9 @@ const GamePage = () => {
 
 	useEffect(() => {
 		if (!username) return;
+		let notifi = AppNotification.loading({
+			message: "Waiting for server to be connect",
+		});
 		let tempSocket = io(SOCKET_URL, {
 			reconnectionDelayMax: 10000,
 			query: {
@@ -57,12 +61,21 @@ const GamePage = () => {
 
 		tempSocket.on("connect", () => {
 			dispatch(addMySocketID(tempSocket?.id));
+			setTimeout(() => {
+				AppNotification.close(notifi);
+				notifi = null;
+			}, 1000);
 		});
 
 		setSocket(tempSocket);
 
 		return () => {
 			tempSocket.disconnect();
+
+			if (notifi) {
+				AppNotification.close(notifi);
+				notifi = null;
+			}
 		};
 	}, [username, dispatch]);
 
