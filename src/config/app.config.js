@@ -1,5 +1,5 @@
 // Client CONFIG
-export const SOCKET_URL = "https://skribble-backend.herokuapp.com/";
+export const SOCKET_URL = "https://skibble-clone-backend.onrender.com";
 //  "https://skribble-backend.herokuapp.com/";
 
 export const COLOR_LIST = [
